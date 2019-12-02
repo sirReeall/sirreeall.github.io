@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+
+<beans>
+
+	<bean id="transformer.worker.html2pdf" class="org.alfresco.repo.content.transform.RuntimeExecutableContentTransformerWorker">
+		<property name="mimetypeService">
+			<ref bean="mimetypeService" />
+		</property>
+		<property name="checkCommand">
+			<bean class="org.alfresco.util.exec.RuntimeExec">
+				<property name="commandsAndArguments">
+					<map>
+						<entry key="Linux">
+							<list>
+								<value>sh</value>
+								<value>-c</value>
+								<value>/usr/local/bin/wkhtmltopdf -V</value>
+							</list>
+						</entry>
+					</map>
+				</property>
+				<property name="errorCodes">
+					<value>1</value>
+				</property>
+			</bean>
+		</property>
+		<property name="transformCommand">
+			<bean class="org.alfresco.util.exec.RuntimeExec">
+				<property name="commandsAndArguments">
+					<map>
+						<entry key="Linux">
+							<list>
+								<value>sh</value>
+								<value>-c</value>
+								<value>/usr/local/bin/wkhtmltopdf ${source} ${target}</value>
+							</list>
+						</entry>
+					</map>
+				</property>
+				<property name="errorCodes">
+					<value>1</value>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	<bean id="transformer.html2pdf" class="org.alfresco.repo.content.transform.ProxyContentTransformer" parent="baseContentTransformer">
+		<property name="worker">
+			<ref bean="transformer.worker.html2pdf" />
+		</property>
+	</bean>
+
+</beans>
